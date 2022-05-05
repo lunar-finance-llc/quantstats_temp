@@ -1211,6 +1211,9 @@ def metrics(returns, benchmark=None, rf=0., display=True,
     today = df.index[-1]  # _dt.today()
     metrics['MTD %'] = comp_func(df[df.index >= _dt(today.year, today.month, 1)]) * pct
 
+    d = today - relativedelta(months=1)
+    metrics['1M %'] = comp_func(df[df.index >= d]) * pct
+
     d = today - relativedelta(months=3)
     metrics['3M %'] = comp_func(df[df.index >= d]) * pct
 
