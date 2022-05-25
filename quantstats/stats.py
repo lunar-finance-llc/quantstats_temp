@@ -504,6 +504,8 @@ def cagr(returns, rf=0., compounded=True):
         total = _np.sum(total)
 
     years = (returns.index[-1] - returns.index[0]).days / 365.
+    if not years:
+        return 0.0
 
     res = abs(total + 1.0) ** (1.0 / years) - 1
 
@@ -1052,7 +1054,7 @@ def _calc_dd(df, display=True, as_pct=False):
 def metrics(returns, benchmark=None, rf=0., display=True,
             mode='basic', sep=False, compounded=True,
             periods_per_year=252, prepare_returns=True,
-            match_dates=False, **kwargs):
+            match_dates=False, lookback_from_last_trade=True, **kwargs):
 
     win_year, _ = get_trading_periods(periods_per_year)
 
@@ -1208,7 +1210,11 @@ def metrics(returns, benchmark=None, rf=0., display=True,
     metrics['~~'] = blank
     comp_func = comp if compounded else _np.sum
 
-    today = df.index[-1]  # _dt.today()
+    if lookback_from_last_trade:
+        today = df.index[-1]
+    else:
+        today = _dt.today()
+
     metrics['MTD %'] = comp_func(df[df.index >= _dt(today.year, today.month, 1)]) * pct
 
     d = today - relativedelta(months=1)
