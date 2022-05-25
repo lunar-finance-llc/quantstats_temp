@@ -97,6 +97,8 @@ def expected_return(returns, aggregate=None, compounded=True,
     if prepare_returns:
         returns = _utils._prepare_returns(returns)
     returns = _utils.aggregate_returns(returns, aggregate, compounded)
+    if len(returns) == 0:
+        return None
     return _np.product(1 + returns) ** (1 / len(returns)) - 1
 
 
@@ -505,7 +507,7 @@ def cagr(returns, rf=0., compounded=True):
 
     years = (returns.index[-1] - returns.index[0]).days / 365.
     if not years:
-        return 0.0
+        return None
 
     res = abs(total + 1.0) ** (1.0 / years) - 1
 
