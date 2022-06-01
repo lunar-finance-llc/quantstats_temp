@@ -35,13 +35,9 @@ except ImportError:
     pass
 
 
-def html(returns, benchmark=None, rf=0., grayscale=False,
-         title='Strategy Tearsheet', output=None, compounded=True,
-         periods_per_year=252, download_filename='quantstats-tearsheet.html',
-         figfmt='svg', template_path=None, match_dates=False, **kwargs):
-
-    if output is None and not _utils._in_notebook():
-        raise ValueError("`file` must be specified")
+def raw_html(returns, benchmark=None, rf=0., grayscale=False,
+             title='Strategy Tearsheet', compounded=True, periods_per_year=252,
+             figfmt='svg', template_path=None, match_dates=False, **kwargs):
 
     win_year, win_half_year = _stats.get_trading_periods(periods_per_year)
 
@@ -233,6 +229,20 @@ def html(returns, benchmark=None, rf=0., grayscale=False,
 
     tpl = _regex.sub(r'\{\{(.*?)\}\}', '', tpl)
     tpl = tpl.replace('white-space:pre;', '')
+    return tpl
+
+
+def html(returns, benchmark=None, rf=0., grayscale=False,
+         title='Strategy Tearsheet', output=None, compounded=True,
+         periods_per_year=252, download_filename='quantstats-tearsheet.html',
+         figfmt='svg', template_path=None, match_dates=False, **kwargs):
+
+    if output is None and not _utils._in_notebook():
+        raise ValueError("`file` must be specified")
+
+    tpl = raw_html(returns=returns, benchmark=benchmark, rf=rf, grayscale=grayscale,
+             title=title, compounded=compounded, periods_per_year=periods_per_year,
+             figfmt=figfmt, template_path=template_path, match_dates=match_dates, **kwargs)
 
     if output is None:
         # _open_html(tpl)
